@@ -6,7 +6,7 @@ import tensorflow as tf
 from PIL import Image
 from resizeimage import resizeimage
 
-model = tf.keras.models.load_model('model.h5')
+model = tf.keras.models.load_model('model/model.h5')
 pygame.init()
 
 display_width = 300
@@ -17,7 +17,7 @@ black = (0, 0, 0)  # RGB
 white = (255, 255, 255)
 
 gameDisplay = pygame.display.set_mode((display_width, display_height))
-pygame.display.set_caption('Drawing pad')
+pygame.display.set_caption('Drawing Pad')
 
 
 def digPredict(gameDisplay):
@@ -61,7 +61,7 @@ def gameLoop():
             predVal = digPredict(gameDisplay)
             gameDisplay.fill(black)
             message_display("Predicted Value: " + str(predVal), int(display_width / 2), int(display_height / 2), 20)
-            time.sleep(2)  # sleep for 5 seconds
+            time.sleep(2)  # sleep for 2 seconds
             gameDisplay.fill(black)
             pygame.display.flip()
             tick = 0

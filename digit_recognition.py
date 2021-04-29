@@ -1,9 +1,11 @@
 import keras
+import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from keras.datasets import mnist
-from keras.layers import Dense, Conv2D, MaxPooling2D, Input, Flatten
-from keras.models import Model
+from keras.layers import Dense, Conv2D, MaxPooling2D, Flatten
+from tensorflow.python.keras.layers import Dropout
+from tensorflow.python.keras.models import Sequential
 
 np.random.seed(42)
 
@@ -13,7 +15,11 @@ input_shape = (28, 28, 1)
 num_classes = 10  # total classes (0-9 digits)
 
 # Prepare MNIST data
+# http://yann.lecun.com/exdb/mnist/
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
+print("Training set : ", x_train.shape)
+print("Testing set : ", x_test.shape)
+
 # Convert to float32
 x_train, x_test = np.array(x_train, np.float32), np.array(x_test, np.float32)
 # Flatten images to 1-D vector of 784 features (28*28)
@@ -30,6 +36,7 @@ train_data = train_data.repeat().shuffle(5000).batch(batch_size).prefetch(1)
 
 
 def digModel(input_shape=(28, 28, 1)):
+    '''
     X_input = Input(input_shape)
     X = Conv2D(filters=32, kernel_size=(5, 5), strides=(1, 1), padding='same', activation='relu')(X_input)
     X = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding='valid')(X)
@@ -42,6 +49,24 @@ def digModel(input_shape=(28, 28, 1)):
     X = Dense(num_classes, activation='softmax', kernel_initializer='TruncatedNormal', bias_initializer='zeros')(X)
 
     model = Model(inputs=X_input, outputs=X, name='digModel')
+    '''
+
+    number_of_classes = 10
+
+    model = Sequential()
+    model.add(Conv2D(32, kernel_size=(5, 5), activation='relu',  padding='same', input_shape=input_shape))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding='valid'))
+
+    model.add(Conv2D(64, (5, 5), activation='relu',  padding='same'))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding='valid'))
+
+    model.add(Dropout(0.25))
+    model.add(Flatten())
+    model.add(Dense(128, activation='relu'))
+
+    model.add(Dropout(0.5))
+    model.add(Dense(number_of_classes, activation='softmax'))
+
     return model
 
 
@@ -56,11 +81,24 @@ hist = model.fit(x_train, y_train,
                  epochs=10,
                  validation_data=(x_test, y_test),
                  )
-model.save_weights("weights.h5")
-model.save("model.h5")
+
+model.save_weights("model/weights.h5")
+model.save("model/model.h5")
+
+fig, ax = plt.subplots(1, 2, figsize=(12, 5))
+
+ax[0].plot(hist.history["loss"], label="Training loss")
+ax[0].plot(hist.history["val_loss"], label="Validation loss")
+ax[0].legend()
+
+ax[1].plot(hist.history["accuracy"], label="Training accuracy")
+ax[1].plot(hist.history["val_accuracy"], label="Validation accuracy")
+ax[1].legend()
+
+plt.show()
 
 # Load Model
-model.load_weights("weights.h5")
+model.load_weights("model/weights.h5")
 
 score = model.evaluate(x_test, y_test)
 score2 = model.evaluate(x_train, y_train)
