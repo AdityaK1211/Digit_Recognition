@@ -30,11 +30,11 @@ grayscale pixel value
 A neural network is made up by stacking layers of neurons, and is defined by the weights of 
 connections and biases of neurons. Activations are a result dependent on a certain input.
 This structure is known as a feedforward architecture because the connections in the network 
-flow forward from the input layer to the output layer without any feedback loops. In this figure:
-▪ The input layer contains the predictors.
+flow forward from the input layer to the output layer without any feedback loops. In this figure:<br>
+▪ The input layer contains the predictors.<br>
 ▪ The hidden layer contains unobservable nodes, or units. The value of each hidden unit is 
 some function of the predictors; the exact form of the function depends in part upon the 
-network type and in part upon user-controllable specifications.
+network type and in part upon user-controllable specifications.<br>
 ▪ The output layer contains the responses. Since the history of default is a categorical 
 variable with two categories, it is recoded as two indicator variables. Each output unit is 
 some function of the hidden units. Again, the exact form of the function depends in part 
